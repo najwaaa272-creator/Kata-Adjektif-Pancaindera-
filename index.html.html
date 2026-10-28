@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KOTAK HADIAH MISTERI: KATA ADJEKTIF PANCAINDERA</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Google Fonts: Fredoka & Plus Jakarta Sans -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
+
+  <!-- Tone.js for Web Audio Synthesizer Effects (No external URLs needed) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            fredoka: ['Fredoka', 'sans-serif'],
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          colors: {
+            agentBg: '#0f172a',
+            giftPink: '#f472b6',
+            giftBlue: '#38bdf8',
+            giftGreen: '#4ade80',
+            giftYellow: '#fbbf24',
+            giftPurple: '#c084fc',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: radial-gradient(circle at 50% 30%, #1e1b4b 0%, #0f172a 100%);
+      min-height: 100vh;
+      color: #ffffff;
+      user-select: none;
+    }
+
+    /* Floating gift animation */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(2deg); }
+    }
+    .animate-float {
+      animation: float 3.5s ease-in-out infinite;
+    }
+
+    /* Pulse glow */
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 20px rgba(250, 204, 21, 0.4); }
+      50% { box-shadow: 0 0 40px rgba(250, 204, 21, 0.8); }
+    }
+    .glow-yellow {
+      animation: pulseGlow 2.5s infinite;
+    }
+
+    /* Shaking for wrong answer */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-12px); }
+      40%, 80% { transform: translateX(12px); }
+    }
+    .animate-shake {
+      animation: shake 0.5s ease-in-out;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #38bdf8;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen overflow-x-hidden">
+
+  <!-- TOP HEADER / HUD -->
+  <header class="w-full max-w-6xl mx-auto px-4 py-3 mt-2 flex justify-between items-center bg-slate-900/80 backdrop-blur-md border-2 border-cyan-400/40 rounded-2xl shadow-lg">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white text-xl shadow-md">
+        <i class="fa-solid fa-user-shield"></i>
+      </div>
+      <div>
+        <h1 class="font-fredoka text-lg md:text-xl text-yellow-300 tracking-wide leading-tight">
+          MISI EJEN CILIK
+        </h1>
+        <p class="text-xs text-slate-300 font-semibold hidden sm:block">Kata Adjektif Pancaindera Tahun 4</p>
+      </div>
+    </div>
+
+    <!-- HUD Stats & Audio Control -->
+    <div class="flex items-center gap-3 sm:gap-6">
+      <div id="hud-name" class="hidden sm:flex items-center gap-2 bg-slate-800/90 px-3 py-1.5 rounded-xl border border-slate-700 text-xs font-bold text-cyan-300">
+        <i class="fa-solid fa-id-card"></i> <span id="player-display-name">Ejen</span>
+      </div>
+      <div class="flex items-center gap-2 bg-amber-500/20 px-3 py-1.5 rounded-xl border border-amber-400/50 text-amber-300 font-fredoka text-sm">
+        <i class="fa-solid fa-star text-amber-400 text-base"></i> <span id="hud-score">0</span> <span class="text-xs text-amber-200">PTS</span>
+      </div>
+      <button id="sound-toggle-btn" onclick="toggleSound()" class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-600 flex items-center justify-center text-cyan-400 hover:text-cyan-200 hover:bg-slate-700 transition">
+        <i id="sound-icon" class="fa-solid fa-volume-high"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER (SCREENS) -->
+  <main class="flex-1 max-w-5xl w-full mx-auto p-4 flex items-center justify-center">
+
+    <!-- ================= 1. START SCREEN ================= -->
+    <section id="screen-start" class="w-full max-w-xl bg-slate-900/90 border-4 border-cyan-400/60 rounded-3xl p-6 sm:p-8 text-center shadow-2xl backdrop-blur-md glow-yellow">
+      <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-tr from-amber-400 to-amber-200 rounded-3xl flex items-center justify-center text-slate-900 text-5xl shadow-xl animate-float">
+        <i class="fa-solid fa-box-open"></i>
+      </div>
+
+      <h2 class="font-fredoka text-2xl sm:text-3xl text-amber-300 mb-2 uppercase tracking-wide">
+        KOTAK HADIAH MISTERI
+      </h2>
+      <p class="text-cyan-300 font-bold text-sm sm:text-base mb-6">
+        Kuasai 5 Kata Adjektif Pancaindera &amp; Kumpul Lencana Ejen!
+      </p>
+
+      <div class="bg-slate-800/70 p-4 rounded-2xl border border-slate-700 text-left text-xs sm:text-sm text-slate-300 mb-6 space-y-2">
+        <div class="flex items-center gap-2 text-cyan-400 font-bold">
+          <i class="fa-solid fa-circle-info"></i> Arahan Misi:
+        </div>
+        <p>1. Pilih 1 daripada 4 Kotak Hadiah Misteri di skrin.</p>
+        <p>2. Baca soalan dengan teliti dan pilih kata adjektif pancaindera yang betul.</p>
+        <p>3. Dapatkan 10 markah bagi setiap soalan yang betul &amp; kumpul 5 Lencana Pencahayaan!</p>
+      </div>
+
+      <!-- Player Name Input -->
+      <form onsubmit="startGame(event)" class="space-y-4">
+        <div class="text-left">
+          <label for="player-name" class="block font-bold text-sm text-cyan-300 mb-1">
+            <i class="fa-solid fa-user-astronaut"></i> Masukkan Nama Ejen Cilik:
+          </label>
+          <input type="text" id="player-name" required placeholder="Contoh: Ejen Adam" maxlength="15"
+            class="w-full px-4 py-3 rounded-xl bg-slate-800 border-2 border-cyan-400/60 text-white font-bold text-lg focus:outline-none focus:border-amber-400 transition placeholder-slate-500">
+        </div>
+
+        <button type="submit" 
+          class="w-full py-4 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-white font-fredoka text-xl rounded-2xl shadow-lg border-b-4 border-green-800 transform active:translate-y-1 transition flex items-center justify-center gap-3">
+          <i class="fa-solid fa-play text-amber-300"></i> MULA MISI SEKARANG
+        </button>
+      </form>
+    </section>
+
+
+    <!-- ================= 2. GIFT BOX SELECTION SCREEN ================= -->
+    <section id="screen-boxes" class="hidden w-full flex flex-col items-center">
+      
+      <!-- Mission Progress Info Bar -->
+      <div class="w-full flex justify-between items-center mb-6 bg-slate-900/80 p-4 rounded-2xl border border-slate-700">
+        <div class="text-sm font-bold text-slate-300">
+          <i class="fa-solid fa-list-check text-cyan-400"></i> Kemajuan: <span id="answered-count" class="text-amber-300 font-fredoka text-base">0</span> / 10 Soalan
+        </div>
+        <div class="flex gap-2">
+          <!-- Badges Mini Display -->
+          <div id="badge-icon-sight" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-600 text-sm" title="Lencana Mata Tajam">
+            <i class="fa-solid fa-eye"></i>
+          </div>
+          <div id="badge-icon-sound" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-600 text-sm" title="Lencana Pendengar Hebat">
+            <i class="fa-solid fa-ear-listen"></i>
+          </div>
+          <div id="badge-icon-smell" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-600 text-sm" title="Lencana Pengesan Bau">
+            <i class="fa-solid fa-wind"></i>
+          </div>
+          <div id="badge-icon-taste" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-600 text-sm" title="Lencana Pakar Deria Rasa">
+            <i class="fa-solid fa-utensils"></i>
+          </div>
+          <div id="badge-icon-touch" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-600 text-sm" title="Lencana Sentuhan Bijak">
+            <i class="fa-solid fa-hand"></i>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="font-fredoka text-2xl sm:text-3xl text-center text-amber-300 mb-2">
+        PILIH KOTAK HADIAH MISTERI!
+      </h2>
+      <p class="text-sm text-cyan-300 mb-8 text-center">Buka kotak untuk menyelesaikan cabaran soalan kata adjektif pancaindera.</p>
+
+      <!-- 4 Gift Boxes Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 w-full mb-6">
+        
+        <!-- Box 0 -->
+        <button onclick="openBox(0)" id="gift-box-0" class="group relative bg-slate-900/90 border-4 border-pink-400/80 rounded-3xl p-6 flex flex-col items-center justify-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-xl cursor-pointer">
+          <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-pink-500 to-rose-400 flex items-center justify-center text-white text-4xl shadow-md group-hover:rotate-6 transition">
+            <i class="fa-solid fa-gift"></i>
+          </div>
+          <span class="font-fredoka text-pink-300 text-lg">KOTAK 1</span>
+          <span class="box-status text-xs bg-pink-900/60 text-pink-200 px-3 py-1 rounded-full font-bold">MISTERI</span>
+        </button>
+
+        <!-- Box 1 -->
+        <button onclick="openBox(1)" id="gift-box-1" class="group relative bg-slate-900/90 border-4 border-sky-400/80 rounded-3xl p-6 flex flex-col items-center justify-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-xl cursor-pointer">
+          <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-sky-500 to-cyan-400 flex items-center justify-center text-white text-4xl shadow-md group-hover:-rotate-6 transition">
+            <i class="fa-solid fa-gift"></i>
+          </div>
+          <span class="font-fredoka text-sky-300 text-lg">KOTAK 2</span>
+          <span class="box-status text-xs bg-sky-900/60 text-sky-200 px-3 py-1 rounded-full font-bold">MISTERI</span>
+        </button>
+
+        <!-- Box 2 -->
+        <button onclick="openBox(2)" id="gift-box-2" class="group relative bg-slate-900/90 border-4 border-amber-400/80 rounded-3xl p-6 flex flex-col items-center justify-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-xl cursor-pointer">
+          <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-amber-500 to-yellow-400 flex items-center justify-center text-white text-4xl shadow-md group-hover:rotate-6 transition">
+            <i class="fa-solid fa-gift"></i>
+          </div>
+          <span class="font-fredoka text-amber-300 text-lg">KOTAK 3</span>
+          <span class="box-status text-xs bg-amber-900/60 text-amber-200 px-3 py-1 rounded-full font-bold">MISTERI</span>
+        </button>
+
+        <!-- Box 3 -->
+        <button onclick="openBox(3)" id="gift-box-3" class="group relative bg-slate-900/90 border-4 border-purple-400/80 rounded-3xl p-6 flex flex-col items-center justify-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-xl cursor-pointer">
+          <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-purple-500 to-indigo-400 flex items-center justify-center text-white text-4xl shadow-md group-hover:-rotate-6 transition">
+            <i class="fa-solid fa-gift"></i>
+          </div>
+          <span class="font-fredoka text-purple-300 text-lg">KOTAK 4</span>
+          <span class="box-status text-xs bg-purple-900/60 text-purple-200 px-3 py-1 rounded-full font-bold">MISTERI</span>
+        </button>
+
+      </div>
+    </section>
+
+
+    <!-- ================= 3. QUIZ MODAL / QUESTION SCREEN ================= -->
+    <section id="screen-quiz" class="hidden w-full max-w-2xl bg-slate-900/95 border-4 border-cyan-400 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-md relative">
+      
+      <!-- Top Question Sense Header -->
+      <div class="flex justify-between items-center mb-6">
+        <span id="quiz-sense-tag" class="px-4 py-1.5 rounded-full bg-cyan-900/80 text-cyan-300 border border-cyan-400/50 font-bold text-xs uppercase tracking-wider flex items-center gap-2">
+          <i class="fa-solid fa-eye"></i> DERIA PENGLIHATAN
+        </span>
+        <span id="quiz-box-number" class="text-xs text-amber-300 font-fredoka bg-slate-800 px-3 py-1 rounded-xl border border-slate-700">
+          KOTAK 1
+        </span>
+      </div>
+
+      <!-- Question Text -->
+      <div class="bg-slate-800/90 p-5 rounded-2xl border-2 border-slate-700 mb-6 text-center">
+        <p id="quiz-question-text" class="text-lg sm:text-xl font-bold text-white leading-relaxed">
+          "Lampu jalan yang ____ membantu pemandu melihat jalan raya dengan jelas pada waktu malam."
+        </p>
+      </div>
+
+      <!-- 4 Multiple Choice Options -->
+      <div id="quiz-options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        <!-- Options generated dynamically by JS -->
+      </div>
+
+      <!-- Feedback Banner (Correct / Wrong) -->
+      <div id="feedback-banner" class="hidden rounded-2xl p-4 text-center font-bold text-sm sm:text-base border-2 transition-all">
+        <div id="feedback-title" class="font-fredoka text-xl mb-1"></div>
+        <div id="feedback-message" class="text-xs sm:text-sm"></div>
+        <button id="feedback-next-btn" onclick="nextQuestion()" class="mt-3 px-6 py-2 bg-amber-400 text-slate-950 font-fredoka rounded-xl hover:bg-amber-300 transition shadow-md hidden">
+          TERUSKAN MISI <i class="fa-solid fa-arrow-right ml-1"></i>
+        </button>
+      </div>
+    </section>
+
+
+    <!-- ================= 4. END GAME SCREEN ================= -->
+    <section id="screen-end" class="hidden w-full max-w-3xl bg-slate-900/95 border-4 border-amber-400 rounded-3xl p-6 sm:p-8 text-center shadow-2xl backdrop-blur-md relative my-4">
+      
+      <div class="w-20 h-20 mx-auto mb-3 bg-gradient-to-tr from-amber-400 to-yellow-300 rounded-full flex items-center justify-center text-slate-950 text-4xl shadow-xl animate-bounce">
+        <i class="fa-solid fa-trophy"></i>
+      </div>
+
+      <h2 class="font-fredoka text-2xl sm:text-4xl text-amber-300 mb-1 uppercase tracking-wide">
+        TAHNIAH, EJEN CILIK BAHASA MELAYU!
+      </h2>
+      <p id="end-player-name" class="text-lg sm:text-xl font-bold text-cyan-300 mb-6">Ejen Nama</p>
+
+      <!-- Stats Summary Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-2 gap-4 max-w-md mx-auto mb-6">
+        <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4">
+          <div class="text-xs text-slate-400 font-bold mb-1">JUMLAH MARKAH</div>
+          <div id="end-score" class="font-fredoka text-3xl text-amber-400">100</div>
+        </div>
+        <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4">
+          <div class="text-xs text-slate-400 font-bold mb-1">JAWAPAN TEPAT</div>
+          <div id="end-correct-count" class="font-fredoka text-3xl text-emerald-400">10 / 10</div>
+        </div>
+      </div>
+
+      <!-- Badges Earned Section -->
+      <div class="mb-6 bg-slate-800/60 border border-slate-700 p-4 rounded-2xl">
+        <h3 class="font-fredoka text-sm text-amber-300 mb-3 uppercase tracking-wider">
+          <i class="fa-solid fa-award"></i> LENCANA PENCAPAIAN DIPEROLEH
+        </h3>
+        <div id="end-badges-grid" class="flex flex-wrap justify-center gap-3">
+          <!-- Badges dynamically rendered here -->
+        </div>
+      </div>
+
+      <!-- Teacher's Photo & Note Space -->
+      <div class="bg-slate-800/90 border-2 border-cyan-400/40 rounded-2xl p-4 mb-6 flex flex-col sm:flex-row items-center gap-4 text-left">
+        <div class="relative w-20 h-20 rounded-xl overflow-hidden bg-slate-700 flex-shrink-0 border-2 border-cyan-300">
+          <img id="teacher-photo" src="https://placehold.co/150x150/0284c7/ffffff?text=GURU+BM" alt="Gambar Guru" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/150x150/0284c7/ffffff?text=GURU+BM'">
+          <label for="teacher-upload" class="absolute bottom-0 inset-x-0 bg-slate-900/80 text-[9px] text-center text-cyan-300 py-0.5 cursor-pointer hover:bg-slate-900">
+            Tukar Foto
+          </label>
+          <input type="file" id="teacher-upload" accept="image/*" class="hidden" onchange="loadTeacherPhoto(event)">
+        </div>
+        <div>
+          <div class="font-fredoka text-sm text-cyan-300 mb-0.5">PESANAN GURU BAHASA MELAYU:</div>
+          <p id="teacher-motivation-text" class="text-xs sm:text-sm text-slate-200 italic leading-relaxed">
+            "Syabas dan tahniah! Kamu telah membuktikan kehebatan kamu menguasai kata adjektif pancaindera. Kekalkan semangat belajar ini untuk menjadi Ejen Bahasa yang terbaik!"
+          </p>
+        </div>
+      </div>
+
+      <!-- Play Again Button -->
+      <button onclick="resetGame()" 
+        class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-fredoka text-lg rounded-2xl shadow-lg border-b-4 border-amber-700 transform active:translate-y-1 transition inline-flex items-center justify-center gap-2">
+        <i class="fa-solid fa-rotate-right"></i> MAIN SEMULA
+      </button>
+
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="w-full text-center py-3 text-xs text-slate-400 border-t border-slate-800 bg-slate-950/80">
+    <p>© BAHASA MELAYU TAHUN 4 — KOTAK HADIAH MISTERI KATA ADJEKTIF PANCAINDERA</p>
+  </footer>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // ==========================================
+    // 1. QUESTION BANK (10 Questions, 5 Senses)
+    // ==========================================
+    const questionBank = [
+      // PENGLIHATAN (Sight)
+      {
+        id: 1,
+        sense: 'sight',
+        senseLabel: 'Deria Penglihatan',
+        senseIcon: 'fa-eye',
+        senseColor: 'sky',
+        question: 'Lampu jalan yang ____ membantu pemandu melihat jalan raya dengan jelas pada waktu malam.',
+        options: ['gelap', 'terang', 'nyaring', 'kasar'],
+        answer: 'terang',
+        hint: 'Fikirkan keadaan lampu yang memudahkan mata melihat.'
+      },
+      {
+        id: 2,
+        sense: 'sight',
+        senseLabel: 'Deria Penglihatan',
+        senseIcon: 'fa-eye',
+        senseColor: 'sky',
+        question: 'Bilik bacaan itu sangat ____ kerana terdapat banyak tingkap dan cahaya matahari masuk.',
+        options: ['cerah', 'busuk', 'bising', 'pahit'],
+        answer: 'cerah',
+        hint: 'Gunakan deria penglihatan untuk mengesan suasana cahaya.'
+      },
+      // PENDENGARAN (Sound)
+      {
+        id: 3,
+        sense: 'sound',
+        senseLabel: 'Deria Pendengaran',
+        senseIcon: 'fa-ear-listen',
+        senseColor: 'purple',
+        question: 'Bunyi siren ambulans itu amat ____ sehingga dapat didengar dari jauh.',
+        options: ['wangi', 'nyaring', 'licin', 'gelap'],
+        answer: 'nyaring',
+        hint: 'Fikirkan bunyi tinggi dan kuat yang ditangkap oleh telinga.'
+      },
+      {
+        id: 4,
+        sense: 'sound',
+        senseLabel: 'Deria Pendengaran',
+        senseIcon: 'fa-ear-listen',
+        senseColor: 'purple',
+        question: 'Suara penyanyi jemputan di atas pentas itu sungguh ____ dan merdu.',
+        options: ['bising', 'pahit', 'merdu', 'kasar'],
+        answer: 'merdu',
+        hint: 'Deria pendengaran menikmati alunan suara yang enak didengar.'
+      },
+      // BAU (Smell)
+      {
+        id: 5,
+        sense: 'smell',
+        senseLabel: 'Deria Bau',
+        senseIcon: 'fa-wind',
+        senseColor: 'emerald',
+        question: 'Bunga ros di taman sekolah mengeluarkan bau yang sangat ____.',
+        options: ['kasar', 'harum', 'nyaring', 'gelap'],
+        answer: 'harum',
+        hint: 'Hidung menghidu aroma bunga yang menyenangkan.'
+      },
+      {
+        id: 6,
+        sense: 'smell',
+        senseLabel: 'Deria Bau',
+        senseIcon: 'fa-wind',
+        senseColor: 'emerald',
+        question: 'Tong sampah di tepi kedai itu berbau ____ kerana tidak bertutup.',
+        options: ['wangi', 'busuk', 'licin', 'manis'],
+        answer: 'busuk',
+        hint: 'Fikirkan bau tidak menyenangkan yang dikesan oleh hidung.'
+      },
+      // RASA (Taste)
+      {
+        id: 7,
+        sense: 'taste',
+        senseLabel: 'Deria Rasa',
+        senseIcon: 'fa-utensils',
+        senseColor: 'amber',
+        question: 'Buah mangga muda itu rasanya sangat ____ sehingga Adik terpejam mata.',
+        options: ['masam', 'bising', 'cerah', 'kasar'],
+        answer: 'masam',
+        hint: 'Lidah merasakan kelazatan atau keasiman buah-buahan.'
+      },
+      {
+        id: 8,
+        sense: 'taste',
+        senseLabel: 'Deria Rasa',
+        senseIcon: 'fa-utensils',
+        senseColor: 'amber',
+        question: 'Kakak menyukai kuih lapis itu kerana rasanya yang ____ dan enak.',
+        options: ['manis', 'nyaring', 'hapak', 'gelap'],
+        answer: 'manis',
+        hint: 'Deria rasa di lidah mengesan kemanisan gula.'
+      },
+      // SENTUHAN (Touch)
+      {
+        id: 9,
+        sense: 'touch',
+        senseLabel: 'Deria Sentuhan',
+        senseIcon: 'fa-hand',
+        senseColor: 'rose',
+        question: 'Lantai bilik mandi yang basah itu sangat ____ dan boleh menyebabkan orang tergelincir.',
+        options: ['licin', 'harum', 'nyaring', 'merdu'],
+        answer: 'licin',
+        hint: 'Sentuhan tapak kaki mengesan kehalusan atau kekicinan permukaan.'
+      },
+      {
+        id: 10,
+        sense: 'touch',
+        senseLabel: 'Deria Sentuhan',
+        senseIcon: 'fa-hand',
+        senseColor: 'rose',
+        question: 'Batang pokok kayu itu terasa ____ apabila disentuh oleh Ejen Cilik.',
+        options: ['kasar', 'manis', 'wangi', 'cerah'],
+        answer: 'kasar',
+        hint: 'Kulit jari dapat merasakan permukaan yang tidak rata.'
+      }
+    ];
+
+    // Badge Definitions
+    const badgeDefs = {
+      sight: { title: 'Lencana Mata Tajam', icon: 'fa-eye', color: 'bg-sky-500', senseName: 'Penglihatan' },
+      sound: { title: 'Lencana Pendengar Hebat', icon: 'fa-ear-listen', color: 'bg-purple-500', senseName: 'Pendengaran' },
+      smell: { title: 'Lencana Pengesan Bau', icon: 'fa-wind', color: 'bg-emerald-500', senseName: 'Bau' },
+      taste: { title: 'Lencana Pakar Deria Rasa', icon: 'fa-utensils', color: 'bg-amber-500', senseName: 'Rasa' },
+      touch: { title: 'Lencana Sentuhan Bijak', icon: 'fa-hand', color: 'bg-rose-500', senseName: 'Sentuhan' }
+    };
+
+    // Game State Variables
+    let playerName = "";
+    let score = 0;
+    let answeredCount = 0;
+    let questionsPool = [];
+    let currentBatch = []; // Active 4 questions assigned to 4 boxes
+    let currentActiveBoxIndex = null;
+    let earnedBadges = new Set();
+    let isSoundMuted = false;
+
+    // Web Audio Synthesizer setup via Tone.js
+    let synth = null;
+
+    function initAudio() {
+      try {
+        synth = new Tone.Synth().toDestination();
+      } catch (e) {
+        console.log("Web Audio tone setup deferred");
+      }
+    }
+
+    function playSound(type) {
+      if (isSoundMuted) return;
+      try {
+        if (!synth) initAudio();
+        Tone.start();
+        const now = Tone.now();
+        if (type === 'correct') {
+          synth.triggerAttackRelease("C5", "8n", now);
+          synth.triggerAttackRelease("E5", "8n", now + 0.12);
+          synth.triggerAttackRelease("G5", "8n", now + 0.24);
+        } else if (type === 'wrong') {
+          synth.triggerAttackRelease("F3", "8n", now);
+          synth.triggerAttackRelease("C3", "8n", now + 0.15);
+        } else if (type === 'box') {
+          synth.triggerAttackRelease("A4", "16n", now);
+        } else if (type === 'victory') {
+          synth.triggerAttackRelease("C5", "8n", now);
+          synth.triggerAttackRelease("G5", "8n", now + 0.15);
+          synth.triggerAttackRelease("C6", "4n", now + 0.3);
+        }
+      } catch (err) {
+        // Fallback quiet ignore
+      }
+    }
+
+    function toggleSound() {
+      isSoundMuted = !isSoundMuted;
+      const icon = document.getElementById('sound-icon');
+      if (isSoundMuted) {
+        icon.className = 'fa-solid fa-volume-xmark text-rose-400';
+      } else {
+        icon.className = 'fa-solid fa-volume-high text-cyan-400';
+        playSound('box');
+      }
+    }
+
+    // Shuffle Array Utility
+    function shuffle(array) {
+      let currentIndex = array.length, randomIndex;
+      while (currentIndex !== 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+      }
+      return array;
+    }
+
+    // ==========================================
+    // 2. GAME FLOW CONTROLLER
+    // ==========================================
+
+    function startGame(e) {
+      e.preventDefault();
+      const inputName = document.getElementById('player-name').value.trim();
+      if (!inputName) return;
+
+      playerName = inputName;
+      document.getElementById('player-display-name').innerText = playerName;
+      document.getElementById('hud-name').classList.remove('hidden');
+
+      // Reset state
+      score = 0;
+      answeredCount = 0;
+      earnedBadges.clear();
+      document.getElementById('hud-score').innerText = score;
+      document.getElementById('answered-count').innerText = answeredCount;
+
+      // Prepare Randomized Question Pool
+      questionsPool = shuffle([...questionBank]);
+
+      // Switch Screens
+      document.getElementById('screen-start').classList.add('hidden');
+      document.getElementById('screen-boxes').classList.remove('hidden');
+
+      // Prepare 4 active boxes
+      setupBoxesBatch();
+      playSound('box');
+    }
+
+    // Prepare active 4 questions for boxes
+    function setupBoxesBatch() {
+      currentBatch = [];
+      
+      for (let i = 0; i < 4; i++) {
+        const boxBtn = document.getElementById(`gift-box-${i}`);
+        
+        // Find next un-answered question from pool
+        const nextQ = questionsPool.find(q => !q.answered);
+        
+        if (nextQ) {
+          currentBatch[i] = nextQ;
+          boxBtn.disabled = false;
+          boxBtn.classList.remove('opacity-40', 'cursor-not-allowed');
+          boxBtn.querySelector('.box-status').innerText = 'MISTERI';
+          boxBtn.querySelector('.box-status').className = 'box-status text-xs bg-amber-900/60 text-amber-200 px-3 py-1 rounded-full font-bold';
+        } else {
+          // No more questions left
+          currentBatch[i] = null;
+          boxBtn.disabled = true;
+          boxBtn.classList.add('opacity-40', 'cursor-not-allowed');
+          boxBtn.querySelector('.box-status').innerText = 'SELESAI';
+          boxBtn.querySelector('.box-status').className = 'box-status text-xs bg-slate-800 text-slate-400 px-3 py-1 rounded-full font-bold';
+        }
+      }
+
+      // Check if all 10 questions have been answered
+      if (answeredCount >= 10 || !currentBatch.some(q => q !== null)) {
+        setTimeout(showEndScreen, 600);
+      }
+    }
+
+    // Open a Gift Box
+    function openBox(boxIndex) {
+      const question = currentBatch[boxIndex];
+      if (!question || question.answered) return;
+
+      currentActiveBoxIndex = boxIndex;
+      playSound('box');
+
+      // Setup Question View
+      document.getElementById('quiz-box-number').innerText = `KOTAK ${boxIndex + 1}`;
+      
+      const senseTag = document.getElementById('quiz-sense-tag');
+      senseTag.innerHTML = `<i class="fa-solid ${question.senseIcon}"></i> ${question.senseLabel}`;
+
+      document.getElementById('quiz-question-text').innerText = `"${question.question}"`;
+
+      // Render Options
+      const optionsContainer = document.getElementById('quiz-options-container');
+      optionsContainer.innerHTML = '';
+
+      // Hide Feedback Banner initially
+      const feedbackBanner = document.getElementById('feedback-banner');
+      feedbackBanner.className = 'hidden';
+      document.getElementById('feedback-next-btn').classList.add('hidden');
+
+      // Shuffle options for rendering
+      const shuffledOptions = shuffle([...question.options]);
+
+      shuffledOptions.forEach((opt, idx) => {
+        const letter = String.fromCharCode(65 + idx);
+        const optBtn = document.createElement('button');
+        optBtn.className = 'option-btn w-full p-4 rounded-2xl bg-slate-800 border-2 border-slate-700 hover:border-cyan-400 hover:bg-slate-750 text-left flex items-center gap-3 transition font-bold text-white text-base sm:text-lg shadow-md';
+        optBtn.onclick = () => checkAnswer(opt, question, optBtn);
+        optBtn.innerHTML = `
+          <span class="w-8 h-8 rounded-xl bg-cyan-950 border border-cyan-400/50 flex items-center justify-center text-cyan-300 font-fredoka text-sm">${letter}</span>
+          <span>${opt}</span>
+        `;
+        optionsContainer.appendChild(optBtn);
+      });
+
+      // Show Quiz Modal Screen
+      document.getElementById('screen-boxes').classList.add('hidden');
+      document.getElementById('screen-quiz').classList.remove('hidden');
+    }
+
+    // Check Player's Selected Answer
+    function checkAnswer(selectedOpt, question, btnElement) {
+      const allOptBtns = document.querySelectorAll('.option-btn');
+      const feedbackBanner = document.getElementById('feedback-banner');
+      const feedbackTitle = document.getElementById('feedback-title');
+      const feedbackMessage = document.getElementById('feedback-message');
+      const nextBtn = document.getElementById('feedback-next-btn');
+
+      if (selectedOpt === question.answer) {
+        // --- CORRECT ANSWER ---
+        playSound('correct');
+        score += 10;
+        answeredCount++;
+        question.answered = true;
+        earnedBadges.add(question.sense);
+
+        // Update HUD
+        document.getElementById('hud-score').innerText = score;
+        document.getElementById('answered-count').innerText = answeredCount;
+        updateMiniBadges();
+
+        // Highlight Button
+        btnElement.className = 'option-btn w-full p-4 rounded-2xl bg-emerald-900/90 border-2 border-emerald-400 text-left flex items-center gap-3 font-bold text-white text-base sm:text-lg shadow-lg';
+        allOptBtns.forEach(b => b.disabled = true);
+
+        // Feedback Text
+        feedbackBanner.className = 'block bg-emerald-950/90 border-2 border-emerald-400 text-emerald-200 rounded-2xl p-4 text-center mt-4';
+        feedbackTitle.innerText = 'TAHNIAH, EJEN CILIK!';
+        feedbackMessage.innerText = `Jawapan kamu tepat! '${question.answer.toUpperCase()}' ialah kata adjektif bagi ${question.senseLabel}. (+10 Markah)`;
+
+        nextBtn.classList.remove('hidden');
+
+      } else {
+        // --- WRONG ANSWER ---
+        playSound('wrong');
+        btnElement.className = 'option-btn w-full p-4 rounded-2xl bg-rose-900/90 border-2 border-rose-400 text-left flex items-center gap-3 font-bold text-white text-base sm:text-lg animate-shake';
+        btnElement.disabled = true;
+
+        // Soft Feedback & Retry Option
+        feedbackBanner.className = 'block bg-amber-950/90 border-2 border-amber-400 text-amber-200 rounded-2xl p-4 text-center mt-4';
+        feedbackTitle.innerText = 'OPS! CUBA LAGI!';
+        feedbackMessage.innerText = `Jawapan '${selectedOpt}' kurang tepat. ${question.hint}`;
+      }
+    }
+
+    function nextQuestion() {
+      // Mark current box as opened in UI
+      const boxBtn = document.getElementById(`gift-box-${currentActiveBoxIndex}`);
+      boxBtn.disabled = true;
+      boxBtn.classList.add('opacity-50');
+      boxBtn.querySelector('.box-status').innerText = 'DIBUKA ✓';
+      boxBtn.querySelector('.box-status').className = 'box-status text-xs bg-emerald-900 text-emerald-300 px-3 py-1 rounded-full font-bold';
+
+      // Switch screen back to boxes
+      document.getElementById('screen-quiz').classList.add('hidden');
+      document.getElementById('screen-boxes').classList.remove('hidden');
+
+      // Check if current batch of 4 is completely opened
+      const remainingInBatch = currentBatch.filter(q => q && !q.answered);
+      if (remainingInBatch.length === 0) {
+        setupBoxesBatch();
+      }
+    }
+
+    function updateMiniBadges() {
+      earnedBadges.forEach(senseKey => {
+        let elId = '';
+        if (senseKey === 'sight') elId = 'badge-icon-sight';
+        if (senseKey === 'sound') elId = 'badge-icon-sound';
+        if (senseKey === 'smell') elId = 'badge-icon-smell';
+        if (senseKey === 'taste') elId = 'badge-icon-taste';
+        if (senseKey === 'touch') elId = 'badge-icon-touch';
+
+        if (elId) {
+          const badgeEl = document.getElementById(elId);
+          badgeEl.className = 'w-8 h-8 rounded-lg bg-amber-500 border border-amber-300 flex items-center justify-center text-slate-950 text-sm shadow-md animate-bounce';
+        }
+      });
+    }
+
+    // ==========================================
+    // 3. END GAME SCREEN & REWARDS
+    // ==========================================
+
+    function showEndScreen() {
+      playSound('victory');
+
+      document.getElementById('screen-boxes').classList.add('hidden');
+      document.getElementById('screen-quiz').classList.add('hidden');
+      document.getElementById('screen-end').classList.remove('hidden');
+
+      document.getElementById('end-player-name').innerText = `EJEN: ${playerName}`;
+      document.getElementById('end-score').innerText = score;
+      document.getElementById('end-correct-count').innerText = `${answeredCount} / 10`;
+
+      // Render Badges Cards
+      const badgesContainer = document.getElementById('end-badges-grid');
+      badgesContainer.innerHTML = '';
+
+      Object.keys(badgeDefs).forEach(key => {
+        const b = badgeDefs[key];
+        const isEarned = earnedBadges.has(key);
+
+        const card = document.createElement('div');
+        card.className = `flex items-center gap-3 p-3 rounded-xl border ${isEarned ? 'bg-slate-800 border-amber-400' : 'bg-slate-900/60 border-slate-800 opacity-40'} min-w-[180px]`;
+        card.innerHTML = `
+          <div class="w-10 h-10 rounded-full ${isEarned ? b.color : 'bg-slate-700'} flex items-center justify-center text-white text-lg shadow-md">
+            <i class="fa-solid ${b.icon}"></i>
+          </div>
+          <div class="text-left">
+            <div class="text-xs font-bold text-white leading-tight">${b.title}</div>
+            <div class="text-[10px] text-amber-300 font-semibold">${isEarned ? 'BERJAYA' : 'BELUM DIBUKA'}</div>
+          </div>
+        `;
+        badgesContainer.appendChild(card);
+      });
+    }
+
+    function loadTeacherPhoto(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('teacher-photo').src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function resetGame() {
+      // Reset question pool states
+      questionBank.forEach(q => q.answered = false);
+      
+      // Reset Mini Badges UI
+      ['badge-icon-sight', 'badge-icon-sound', 'badge-icon-smell', 'badge-icon-taste', 'badge-icon-touch'].forEach(id => {
+        document.getElementById(id).className = 'w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-600 text-sm';
+      });
+
+      document.getElementById('screen-end').classList.add('hidden');
+      document.getElementById('screen-start').classList.remove('hidden');
+    }
+
+    // Auto Init on Page Load
+    window.onload = function() {
+      initAudio();
+    };
+  </script>
+</body>
+</html>
